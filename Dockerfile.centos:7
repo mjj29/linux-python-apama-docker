@@ -1,0 +1,14 @@
+FROM centos:7
+
+# Install python from EPEL repository
+RUN yum install -y epel-release && yum install -y python36 && alternatives --install /usr/bin/python3 python3 /usr/bin/python3.6 1
+ENV AP_PYTHONHOME=/usr
+
+# Add sample project to image
+COPY core /opt/apamacore
+COPY project /opt/project
+COPY launch.sh /opt/launch.sh
+
+# Launch image with correct settings to run project
+ENTRYPOINT ["/opt/launch.sh"]
+CMD ["correlator", "--config", "/opt/project"]

@@ -1,0 +1,6 @@
+monitor m {
+	import "test" as test;
+	action onload() {
+		test.helloWorld();
+	}
+}

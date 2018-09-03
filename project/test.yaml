@@ -1,0 +1,9 @@
+eplPlugins:
+   test:
+      pythonFile: ${PARENT_DIR}/test.py
+      class: test
+
+correlator:
+   initialization:
+      list:
+         - ${PARENT_DIR}/test.mon

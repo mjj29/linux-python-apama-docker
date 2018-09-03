@@ -1,0 +1,14 @@
+FROM opensuse/leap:15.0
+
+# Add Python from default repository
+RUN zypper --non-interactive install python3
+ENV AP_PYTHONHOME=/usr
+
+# Add sample project to image
+COPY core /opt/apamacore
+COPY project /opt/project
+COPY launch.sh /opt/launch.sh
+
+# Launch image with correct settings to run project
+ENTRYPOINT ["/opt/launch.sh"]
+CMD ["correlator", "--config", "/opt/project"]

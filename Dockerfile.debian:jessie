@@ -1,0 +1,21 @@
+FROM debian:jessie as builder
+
+# download and build Python 
+RUN apt-get update && apt-get install -y libssl-dev zlib1g-dev libncurses5-dev libncursesw5-dev libreadline-dev libsqlite3-dev libgdbm-dev libdb5.3-dev libbz2-dev libexpat1-dev liblzma-dev tk-dev wget
+RUN wget -O /root/Python-3.6.6.tar.xz https://www.python.org/ftp/python/3.6.6/Python-3.6.6.tar.xz && (cd /root; tar xf Python-3.6.6.tar.xz)
+RUN (cd /root/Python-3.6.6; ./configure --enable-optimizations --enable-shared && make -j 8 build_all && make altinstall)
+
+FROM debian:jessie
+
+# Copy built python to fresh image
+COPY --from=builder /usr/local /usr/local
+ENV AP_PYTHONHOME=/usr/local
+
+# Add sample project to image
+COPY core /opt/apamacore
+COPY project /opt/project
+COPY launch.sh /opt/launch.sh
+
+# Launch image with correct settings to run project
+ENTRYPOINT ["/opt/launch.sh"]
+CMD ["correlator", "--config", "/opt/project"]
