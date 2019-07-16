@@ -1,0 +1,18 @@
+FROM opensuse/leap:15.0 as builder
+
+# download and build Python 
+RUN zypper --non-interactive install readline-devel sqlite3-devel libbz2-devel zlib-devel libopenssl-devel wget tar gcc make xz libffi-devel
+RUN wget -O /root/Python-3.7.4.tar.xz https://www.python.org/ftp/python/3.7.4/Python-3.7.4.tar.xz && (cd /root; tar xf Python-3.7.4.tar.xz)
+RUN (cd /root/Python-3.7.4; ./configure --enable-optimizations --enable-shared && make -j 8 build_all && make altinstall)
+
+ENV AP_PYTHONHOME=/usr/local
+
+# Add sample project to image
+COPY core /opt/apamacore
+COPY project /opt/project
+COPY launch.sh /opt/launch.sh
+
+# Launch image with correct settings to run project
+ENTRYPOINT ["/opt/launch.sh"]
+CMD ["correlator", "--config", "/opt/project"]
+
